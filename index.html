@@ -17,12 +17,39 @@
         scanButton.addEventListener('click', async () => {
             try {
                 const options = {
-                    acceptAllDevices: true
+                    acceptAllDevices: true,
+                    optionalServices: ['12345678-1234-5678-1234-56789abcdef0']
                 };
                 const device = await navigator.bluetooth.requestDevice(options);
                 const listItem = document.createElement('li');
                 listItem.textContent = device.name || 'Unnamed Device';
                 deviceList.appendChild(listItem);
+
+                // Connect to GATT server
+                const server = await device.gatt.connect();
+                const service = await server.getPrimaryService('12345678-1234-5678-1234-56789abcdef0');
+
+                // Get the characteristic with notify property
+                const characteristic = await service.getCharacteristic('12345678-1234-5678-1234-56789abcdef1');
+
+                if (characteristic.properties.notify) {
+                    const notifyItem = document.createElement('li');
+                    notifyItem.textContent = 'Listening for notifications...';
+                    listItem.appendChild(notifyItem);
+
+                    // Start notifications
+                    await characteristic.startNotifications();
+                    const valueItem = document.createElement('li');
+                    valueItem.textContent = 'Notification Value: ';
+                    deviceList.appendChild(valueItem); // Append once to deviceList
+
+                    characteristic.addEventListener('characteristicvaluechanged', (event) => {
+                        const value = new Uint8Array(event.target.value.buffer).join(', ');
+                        valueItem.textContent = `Notification Value: ${value}`; // Update the same list item
+                    });
+                } else {
+                    alert('Characteristic does not support notifications.');
+                }
             } catch (error) {
                 console.error('Error scanning for devices:', error);
                 alert('Failed to scan for devices. Please ensure Bluetooth is enabled.');
