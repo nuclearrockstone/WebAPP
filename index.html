@@ -3,12 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bluetooth Scanner</title>
+    <title>Sensor</title>
+    <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body>
-    <h1>Bluetooth Device Scanner</h1>
-    <button id="scanButton">Scan for Devices</button>
-    <ul id="deviceList"></ul>
+<body class="bg-blue-50 text-gray-800">
+    <div class="container mx-auto p-4">
+        <h1 class="text-2xl font-bold text-blue-600 text-center mb-4">Sensor Dashboard</h1>
+        <div class="flex justify-center mb-4">
+            <button id="scanButton" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-400">
+                Scan for Devices
+            </button>
+        </div>
+        <ul id="deviceList" class="space-y-2 bg-white p-4 rounded shadow-md"></ul>
+    </div>
 
     <script>
         const scanButton = document.getElementById('scanButton');
@@ -23,6 +30,7 @@
                 const device = await navigator.bluetooth.requestDevice(options);
                 const listItem = document.createElement('li');
                 listItem.textContent = device.name || 'Unnamed Device';
+                listItem.className = "p-2 bg-blue-100 rounded shadow";
                 deviceList.appendChild(listItem);
 
                 // Connect to GATT server
@@ -34,17 +42,19 @@
                 if (characteristic1.properties.notify) {
                     const notifyItem1 = document.createElement('li');
                     notifyItem1.textContent = 'Listening for notifications from characteristic 1...';
+                    notifyItem1.className = "p-2 bg-blue-200 rounded shadow";
                     listItem.appendChild(notifyItem1);
 
                     // Start notifications for characteristic 1
                     await characteristic1.startNotifications();
                     const valueItem1 = document.createElement('li');
-                    valueItem1.textContent = 'Notification Value (Characteristic 1): ';
+                    valueItem1.textContent = 'Votage Value (Channel 1): ';
+                    valueItem1.className = "p-2 bg-blue-300 rounded shadow";
                     deviceList.appendChild(valueItem1);
 
                     characteristic1.addEventListener('characteristicvaluechanged', (event) => {
                         const value = new DataView(event.target.value.buffer).getInt32(0, true);
-                        valueItem1.textContent = `Notification Value (Characteristic 1): ${value}`;
+                        valueItem1.textContent = `Votage Value (Channel 1): ${value}mv`;
                     });
                 } else {
                     alert('Characteristic 1 does not support notifications.');
@@ -55,17 +65,19 @@
                 if (characteristic2.properties.notify) {
                     const notifyItem2 = document.createElement('li');
                     notifyItem2.textContent = 'Listening for notifications from characteristic 2...';
+                    notifyItem2.className = "p-2 bg-blue-200 rounded shadow";
                     listItem.appendChild(notifyItem2);
 
                     // Start notifications for characteristic 2
                     await characteristic2.startNotifications();
                     const valueItem2 = document.createElement('li');
-                    valueItem2.textContent = 'Notification Value (Characteristic 2): ';
+                    valueItem2.textContent = 'Votage Value (Channel 2): ';
+                    valueItem2.className = "p-2 bg-blue-300 rounded shadow";
                     deviceList.appendChild(valueItem2);
 
                     characteristic2.addEventListener('characteristicvaluechanged', (event) => {
                         const value = new DataView(event.target.value.buffer).getInt32(0, true);
-                        valueItem2.textContent = `Notification Value (Characteristic 2): ${value}`;
+                        valueItem2.textContent = `Votage Value (Channel 2): ${value}mv`;
                     });
                 } else {
                     alert('Characteristic 2 does not support notifications.');
