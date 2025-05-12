@@ -29,26 +29,46 @@
                 const server = await device.gatt.connect();
                 const service = await server.getPrimaryService('12345678-1234-5678-1234-56789abcdef0');
 
-                // Get the characteristic with notify property
-                const characteristic = await service.getCharacteristic('12345678-1234-5678-1234-56789abcdef1');
+                // Get the first characteristic with notify property
+                const characteristic1 = await service.getCharacteristic('12345678-1234-5678-1234-56789abcdef1');
+                if (characteristic1.properties.notify) {
+                    const notifyItem1 = document.createElement('li');
+                    notifyItem1.textContent = 'Listening for notifications from characteristic 1...';
+                    listItem.appendChild(notifyItem1);
 
-                if (characteristic.properties.notify) {
-                    const notifyItem = document.createElement('li');
-                    notifyItem.textContent = 'Listening for notifications...';
-                    listItem.appendChild(notifyItem);
+                    // Start notifications for characteristic 1
+                    await characteristic1.startNotifications();
+                    const valueItem1 = document.createElement('li');
+                    valueItem1.textContent = 'Notification Value (Characteristic 1): ';
+                    deviceList.appendChild(valueItem1);
 
-                    // Start notifications
-                    await characteristic.startNotifications();
-                    const valueItem = document.createElement('li');
-                    valueItem.textContent = 'Notification Value: ';
-                    deviceList.appendChild(valueItem); // Append once to deviceList
-
-                    characteristic.addEventListener('characteristicvaluechanged', (event) => {
-                        const value = new Uint8Array(event.target.value.buffer).join(', ');
-                        valueItem.textContent = `Notification Value: ${value}`; // Update the same list item
+                    characteristic1.addEventListener('characteristicvaluechanged', (event) => {
+                        const value = new DataView(event.target.value.buffer).getInt32(0, true);
+                        valueItem1.textContent = `Notification Value (Characteristic 1): ${value}`;
                     });
                 } else {
-                    alert('Characteristic does not support notifications.');
+                    alert('Characteristic 1 does not support notifications.');
+                }
+
+                // Get the second characteristic with notify property
+                const characteristic2 = await service.getCharacteristic('12345678-1234-5678-1234-56789abcdef2');
+                if (characteristic2.properties.notify) {
+                    const notifyItem2 = document.createElement('li');
+                    notifyItem2.textContent = 'Listening for notifications from characteristic 2...';
+                    listItem.appendChild(notifyItem2);
+
+                    // Start notifications for characteristic 2
+                    await characteristic2.startNotifications();
+                    const valueItem2 = document.createElement('li');
+                    valueItem2.textContent = 'Notification Value (Characteristic 2): ';
+                    deviceList.appendChild(valueItem2);
+
+                    characteristic2.addEventListener('characteristicvaluechanged', (event) => {
+                        const value = new DataView(event.target.value.buffer).getInt32(0, true);
+                        valueItem2.textContent = `Notification Value (Characteristic 2): ${value}`;
+                    });
+                } else {
+                    alert('Characteristic 2 does not support notifications.');
                 }
             } catch (error) {
                 console.error('Error scanning for devices:', error);
