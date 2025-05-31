@@ -1,92 +1,54 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sensor</title>
+    <title>温湿度监控系统</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="styles.css">
 </head>
-<body class="bg-blue-50 text-gray-800">
-    <div class="container mx-auto p-4">
-        <h1 class="text-2xl font-bold text-blue-600 text-center mb-4">Sensor Dashboard</h1>
-        <div class="flex justify-center mb-4">
-            <button id="scanButton" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-400">
-                Scan for Devices
+<body class="bg-gray-100 min-h-screen p-4">
+    <div class="container mx-auto max-w-3xl">
+        <header class="text-center mb-8">
+            <h1 class="text-3xl font-bold text-gray-800">温湿度监控系统</h1>
+        </header>
+        
+        <div class="flex justify-center mb-6">
+            <button id="searchDevice" class="bg-blue-500 hover:bg-blue-600 text-white px-6 py-2 rounded-lg flex items-center">
+                <i class="fas fa-bluetooth-b mr-2"></i>
+                搜索设备
             </button>
         </div>
-        <ul id="deviceList" class="space-y-2 bg-white p-4 rounded shadow-md"></ul>
+
+        <div class="grid md:grid-cols-2 gap-6">
+            <div class="bg-white p-6 rounded-xl shadow-lg">
+                <div class="flex items-center mb-4">
+                    <i class="fas fa-temperature-high text-red-500 text-xl mr-2"></i>
+                    <h2 class="text-xl font-semibold">温度</h2>
+                </div>
+                <div class="flex items-baseline mb-4">
+                    <span id="currentTemp" class="text-4xl font-bold">--</span>
+                    <span class="text-gray-500 ml-2">°C</span>
+                    <span id="setTemp" class="text-sm text-gray-500 ml-4">(设定: --°C)</span>
+                </div>
+                <input type="range" id="tempSlider" min="0" max="50" class="w-full" value="25">
+            </div>
+
+            <div class="bg-white p-6 rounded-xl shadow-lg">
+                <div class="flex items-center mb-4">
+                    <i class="fas fa-tint text-blue-500 text-xl mr-2"></i>
+                    <h2 class="text-xl font-semibold">湿度</h2>
+                </div>
+                <div class="flex items-baseline mb-4">
+                    <span id="currentHumidity" class="text-4xl font-bold">--</span>
+                    <span class="text-gray-500 ml-2">%</span>
+                    <span id="setHumidity" class="text-sm text-gray-500 ml-4">(设定: --%)</span>
+                </div>
+                <input type="range" id="humiditySlider" min="0" max="100" class="w-full" value="50">
+            </div>
+        </div>
     </div>
-
-    <script>
-        const scanButton = document.getElementById('scanButton');
-        const deviceList = document.getElementById('deviceList');
-
-        scanButton.addEventListener('click', async () => {
-            try {
-                const options = {
-                    acceptAllDevices: true,
-                    optionalServices: ['12345678-1234-5678-1234-56789abcdef0']
-                };
-                const device = await navigator.bluetooth.requestDevice(options);
-                const listItem = document.createElement('li');
-                listItem.textContent = device.name || 'Unnamed Device';
-                listItem.className = "p-2 bg-blue-100 rounded shadow";
-                deviceList.appendChild(listItem);
-
-                // Connect to GATT server
-                const server = await device.gatt.connect();
-                const service = await server.getPrimaryService('12345678-1234-5678-1234-56789abcdef0');
-
-                // Get the first characteristic with notify property
-                const characteristic1 = await service.getCharacteristic('12345678-1234-5678-1234-56789abcdef1');
-                if (characteristic1.properties.notify) {
-                    const notifyItem1 = document.createElement('li');
-                    notifyItem1.textContent = 'Listening for notifications from characteristic 1...';
-                    notifyItem1.className = "p-2 bg-blue-200 rounded shadow";
-                    listItem.appendChild(notifyItem1);
-
-                    // Start notifications for characteristic 1
-                    await characteristic1.startNotifications();
-                    const valueItem1 = document.createElement('li');
-                    valueItem1.textContent = 'Votage Value (Channel 1): ';
-                    valueItem1.className = "p-2 bg-blue-300 rounded shadow";
-                    deviceList.appendChild(valueItem1);
-
-                    characteristic1.addEventListener('characteristicvaluechanged', (event) => {
-                        const value = new DataView(event.target.value.buffer).getInt32(0, true);
-                        valueItem1.textContent = `Votage Value (Channel 1): ${value}mv`;
-                    });
-                } else {
-                    alert('Characteristic 1 does not support notifications.');
-                }
-
-                // Get the second characteristic with notify property
-                const characteristic2 = await service.getCharacteristic('12345678-1234-5678-1234-56789abcdef2');
-                if (characteristic2.properties.notify) {
-                    const notifyItem2 = document.createElement('li');
-                    notifyItem2.textContent = 'Listening for notifications from characteristic 2...';
-                    notifyItem2.className = "p-2 bg-blue-200 rounded shadow";
-                    listItem.appendChild(notifyItem2);
-
-                    // Start notifications for characteristic 2
-                    await characteristic2.startNotifications();
-                    const valueItem2 = document.createElement('li');
-                    valueItem2.textContent = 'Votage Value (Channel 2): ';
-                    valueItem2.className = "p-2 bg-blue-300 rounded shadow";
-                    deviceList.appendChild(valueItem2);
-
-                    characteristic2.addEventListener('characteristicvaluechanged', (event) => {
-                        const value = new DataView(event.target.value.buffer).getInt32(0, true);
-                        valueItem2.textContent = `Votage Value (Channel 2): ${value}mv`;
-                    });
-                } else {
-                    alert('Characteristic 2 does not support notifications.');
-                }
-            } catch (error) {
-                console.error('Error scanning for devices:', error);
-                alert('Failed to scan for devices. Please ensure Bluetooth is enabled.');
-            }
-        });
-    </script>
+    <script src="script.js"></script>
 </body>
 </html>
