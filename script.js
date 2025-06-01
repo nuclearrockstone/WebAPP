@@ -41,7 +41,7 @@ async function connectToDevice() {
         await humidCharacteristic.startNotifications();
         humidCharacteristic.addEventListener('characteristicvaluechanged', handleHumidChange);
 
-        searchButton.innerHTML = '<i class="fas fa-bluetooth-b mr-2"></i>已连接';
+        searchButton.innerHTML = '<i class="fa-brands fa-bluetooth-b mr-2"></i>已连接';
         searchButton.classList.remove('bg-blue-500', 'hover:bg-blue-600');
         searchButton.classList.add('bg-green-500', 'hover:bg-green-600');
     } catch (error) {
