@@ -1,0 +1,22 @@
+{
+  "name": "ble-rgb-webapp",
+  "version": "1.0.0",
+  "description": "A web application to control RGB LED bulbs via BLE.",
+  "main": "src/app.js",
+  "scripts": {
+    "build": "tailwindcss build src/styles.css -o public/styles.css",
+    "start": "live-server public"
+  },
+  "dependencies": {
+    "tailwindcss": "^2.2.19",
+    "live-server": "^1.2.1"
+  },
+  "devDependencies": {},
+  "keywords": [
+    "BLE",
+    "RGB",
+    "WebApp"
+  ],
+  "author": "Your Name",
+  "license": "MIT"
+}
