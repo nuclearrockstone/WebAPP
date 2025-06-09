@@ -23,8 +23,7 @@ humiditySlider.addEventListener('change', updateHumidity);
 async function connectToDevice() {
     try {
         const device = await navigator.bluetooth.requestDevice({
-            acceptAllDevices: true,
-            optionalServices: [UUID_SERVICE]  // 添加要访问的服务UUID
+            filters: [{ services: [UUID_SERVICE] }]  // 添加要访问的服务UUID
         });
 
         searchButton.textContent = '连接中...';
