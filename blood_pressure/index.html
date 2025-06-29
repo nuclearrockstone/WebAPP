@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>血压监测系统</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body class="bg-gray-100">
+    <div class="container mx-auto px-4 py-8">
+        <header class="text-center mb-8">
+            <h1 class="text-3xl font-bold text-gray-800">
+                <i class="fas fa-heartbeat text-red-500"></i> 血压监测系统
+            </h1>
+        </header>
+
+        <div class="grid md:grid-cols-2 gap-6">
+            <div class="bg-white rounded-lg shadow-lg p-6">
+                <div class="flex justify-between items-center mb-6">
+                    <button id="connectBtn" class="bg-blue-500 hover:bg-blue-600 text-white px-6 py-2 rounded-full flex items-center">
+                        <i class="fas fa-bluetooth-b mr-2"></i>
+                        <span>连接设备</span>
+                    </button>
+                    <div id="connectionStatus" class="text-gray-600">
+                        <i class="fas fa-circle text-gray-400"></i>
+                        <span>未连接</span>
+                    </div>
+                </div>
+
+                <div class="mb-6">
+                    <div class="text-2xl font-bold mb-2">当前血压值</div>
+                    <div id="currentPressure" class="text-4xl font-bold text-blue-600">-- mmHg</div>
+                </div>
+
+                <div class="flex items-center">
+                    <button id="alertBtn" class="bg-green-500 hover:bg-green-600 text-white px-6 py-2 rounded-full flex items-center">
+                        <i class="fas fa-exclamation-triangle mr-2"></i>
+                        <span>警报状态</span>
+                    </button>
+                    <div class="ml-4 text-sm text-gray-600">
+                        阈值: <span id="threshold">90</span> mmHg
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-lg shadow-lg p-6">
+                <div id="chartContainer" style="height: 300px; width: 100%;"></div>
+            </div>
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
