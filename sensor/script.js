@@ -50,7 +50,7 @@ async function connectToDevice() {
 }
 
 function handleTempChange(event) {
-    const value = event.target.value.getUint8(0, true);
+    const value = event.target.value.getUint16(0, true)/10;
     currentTemp.textContent = value.toFixed(1);
 }
 
